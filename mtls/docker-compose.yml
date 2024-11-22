@@ -1,0 +1,33 @@
+services:
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.webtls.address=:443"
+    ports:
+      - "127.0.0.1:8888:80"
+      - "127.0.0.1:8889:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    labels:
+      traefik.http.routers.traefik.entrypoints: web
+      # port ignored, just for detection
+      traefik.http.services.traefik.loadbalancer.server.port: 8080
+      traefik.http.routers.traefik.rule: Host(`traefik.7f000001.nip.io`)
+      traefik.http.routers.traefikx.rule: Host(`traefik.7f000001.nip.io`)
+      traefik.http.routers.traefikx.entrypoints: webtls
+      traefik.http.routers.traefikx.tls: "true"
+
+  whoami:
+    image: traefik/whoami
+    container_name: whoami
+    labels:
+      traefik.http.routers.whoami.entrypoints: web
+      traefik.http.services.whoami.loadbalancer.server.port: 80
+      traefik.http.routers.whoami.rule: Host(`whoami.7f000001.nip.io`)
+      traefik.http.routers.whoamix.rule: Host(`whoami.7f000001.nip.io`)
+      traefik.http.routers.whoamix.entrypoints: webtls
+      traefik.http.routers.whoamix.tls: "true"
