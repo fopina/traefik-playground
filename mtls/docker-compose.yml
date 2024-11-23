@@ -6,6 +6,7 @@ services:
       - --api.insecure=true
       - --providers.docker=true
       - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
       - --entrypoints.web.address=:80
       - --entrypoints.webtls.address=:443
       - --entrypoints.webtls.http.tls.options=mtlsTest@file
@@ -23,6 +24,7 @@ services:
       traefik.http.routers.traefikx.rule: Host(`traefik.7f000001.nip.io`)
       traefik.http.routers.traefikx.entrypoints: webtls
       traefik.http.routers.traefikx.tls: "true"
+      traefik.http.routers.traefikx.tls.options: mtlsTest@file
 
   whoami:
     image: traefik/whoami
