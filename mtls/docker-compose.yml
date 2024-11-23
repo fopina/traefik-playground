@@ -36,3 +36,14 @@ services:
       traefik.http.routers.whoamix.rule: Host(`whoami.7f000001.nip.io`)
       traefik.http.routers.whoamix.entrypoints: webtls
       traefik.http.routers.whoamix.tls: "true"
+  
+  nginx:
+    image: nginx:1.19
+    container_name: nginx
+    labels:
+      traefik.http.routers.nginx.entrypoints: web
+      traefik.http.services.nginx.loadbalancer.server.port: 80
+      traefik.http.routers.nginx.rule: Host(`nginx.7f000001.nip.io`)
+      traefik.http.routers.nginxx.rule: Host(`nginx.7f000001.nip.io`)
+      traefik.http.routers.nginxx.entrypoints: webtls
+      traefik.http.routers.nginxx.tls: "true"
