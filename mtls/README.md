@@ -1,6 +1,8 @@
 ### Test traefik mTLS with CN filtering
 
-Traefik supports mTLS but it does not allow filtering by CN. While we could setup different CAs per service and issue multiple certificates for users with access to more than 1 service, it is not very practical.
+Traefik supports mTLS but it does not allow filtering by CN per service, only at `tls.options` level.
+
+While we could setup different `tls.options` entry per service, it is not very practical.
 
 This benchmarks two approaches for CN filtering: `passTLSInfo + matchHeader` versus `custom plugin`
 

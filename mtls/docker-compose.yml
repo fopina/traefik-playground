@@ -36,6 +36,9 @@ services:
       traefik.http.routers.whoamix.rule: Host(`whoami.7f000001.nip.io`)
       traefik.http.routers.whoamix.entrypoints: webtls
       traefik.http.routers.whoamix.tls: "true"
+      traefik.http.routers.whoamix.middlewares: pass-certificate-info
+      traefik.http.middlewares.pass-certificate-info.passTLSClientCert.info.subject.commonName: 'true'
+      traefik.http.routers.whoamix.tls.options: mtlsTest@file
   
   nginx:
     image: nginx:1.19
@@ -51,3 +54,15 @@ services:
       traefik.http.routers.nginx2.entrypoints: webtls
       traefik.http.routers.nginx2.tls: "true"
       traefik.http.routers.nginx2.tls.options: mtlsTest@file
+      traefik.http.routers.nginx3.rule: Host(`nginx-mtls-cn.7f000001.nip.io`)
+      traefik.http.routers.nginx3.entrypoints: webtls
+      traefik.http.routers.nginx3.tls: "true"
+      traefik.http.routers.nginx3.tls.options: mtlsTest@file
+      traefik.http.routers.nginx3.middlewares: pass-certificate-info,validate-cn
+
+  validate-cn:
+    build: cn_validator
+    container_name: validate-cn
+    labels:
+      traefik.http.services.validate-cn.loadbalancer.server.port: 8080
+      traefik.http.middlewares.validate-cn.forwardauth.address: http://validate-cn:8080/validate
