@@ -8,6 +8,7 @@ load '../test/test_helper/bats-assert/load'
            --cacert good-one.pem \
            https://nginx.7f000001.nip.io:8889/
   assert_success
+  assert_output --partial 'Thank you for using nginx.'
 }
 
 @test "test mtls without cert" {
@@ -15,6 +16,7 @@ load '../test/test_helper/bats-assert/load'
            --cacert good-one.pem \
            https://nginx-mtls.7f000001.nip.io:8889/
   assert_failure 56
+  assert_output --partial 'alert bad certificate, errno 0'
 }
 
 @test "test mtls with bad-client cert" {
@@ -24,6 +26,7 @@ load '../test/test_helper/bats-assert/load'
            --key bad-client/key.pem \
            https://nginx-mtls.7f000001.nip.io:8889/
   assert_failure 56
+  assert_output --partial 'alert bad certificate, errno 0'
 }
 
 @test "test mtls with good-client cert" {
@@ -33,4 +36,5 @@ load '../test/test_helper/bats-assert/load'
            --key good-client/key.pem \
            https://nginx-mtls.7f000001.nip.io:8889/
   assert_success
+  assert_output --partial 'Thank you for using nginx.'
 }
