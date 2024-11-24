@@ -44,6 +44,10 @@ services:
       traefik.http.routers.nginx.entrypoints: web
       traefik.http.services.nginx.loadbalancer.server.port: 80
       traefik.http.routers.nginx.rule: Host(`nginx.7f000001.nip.io`)
-      traefik.http.routers.nginxx.rule: Host(`nginx.7f000001.nip.io`)
-      traefik.http.routers.nginxx.entrypoints: webtls
-      traefik.http.routers.nginxx.tls: "true"
+      traefik.http.routers.nginx1.rule: Host(`nginx.7f000001.nip.io`)
+      traefik.http.routers.nginx1.entrypoints: webtls
+      traefik.http.routers.nginx1.tls: "true"
+      traefik.http.routers.nginx2.rule: Host(`nginx-mtls.7f000001.nip.io`)
+      traefik.http.routers.nginx2.entrypoints: webtls
+      traefik.http.routers.nginx2.tls: "true"
+      traefik.http.routers.nginx2.tls.options: mtlsTest@file
