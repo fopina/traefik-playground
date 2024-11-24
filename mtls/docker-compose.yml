@@ -10,12 +10,14 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.webtls.address=:443
       - --entrypoints.webtls.http.tls.options=mtlsTest@file
+      - --experimental.localplugins.example.modulename=github.com/traefik/plugindemo
     ports:
       - 127.0.0.1:8888:80
       - 127.0.0.1:8889:443
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./:/etc/traefik/dynamic/
+      - ./plugin:/plugins-local
     labels:
       traefik.http.routers.traefik.entrypoints: web
       # port ignored, just for detection
@@ -36,6 +38,8 @@ services:
       traefik.http.routers.whoamix.rule: Host(`whoami.7f000001.nip.io`)
       traefik.http.routers.whoamix.entrypoints: webtls
       traefik.http.routers.whoamix.tls: "true"
+      traefik.http.routers.whoamix.middlewares: my-plugin
+      traefik.http.middlewares.my-plugin.plugin.example.headers.Foo: Bar
       traefik.http.routers.whoamix2.rule: Host(`whoami-tls.7f000001.nip.io`)
       traefik.http.routers.whoamix2.entrypoints: webtls
       traefik.http.routers.whoamix2.tls: "true"
@@ -60,8 +64,9 @@ services:
       traefik.http.routers.nginx3.rule: Host(`nginx-mtls-cn.7f000001.nip.io`)
       traefik.http.routers.nginx3.entrypoints: webtls
       traefik.http.routers.nginx3.tls: "true"
+      traefik.http.middlewares.pass-certificate-info2.passTLSClientCert.info.subject.commonName: 'true'
       traefik.http.routers.nginx3.tls.options: mtlsTest@file
-      traefik.http.routers.nginx3.middlewares: pass-certificate-info,validate-cn
+      traefik.http.routers.nginx3.middlewares: pass-certificate-info2,validate-cn
 
   validate-cn:
     build: cn_validator
