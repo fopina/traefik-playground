@@ -34,34 +34,24 @@ test_it.bats
 4 tests, 0 failures
 ```
 
-nginx to benchmark different mTLS approaches, as it's lighter than whoami and easier to notice differences
+`whoami` used to validate headers, `nginx` to benchmark different mTLS approaches, as it replies 3x faster than whoami and easier to notice differences
 
 ```
-$ hey -n 10000 https://whoami.7f000001.nip.io:8889
+$ bombardier -n 10000 https://whoami.7f000001.nip.io:8889 -k   
+Statistics        Avg      Stdev        Max
+  Reqs/sec      2094.29     721.82    3572.05
+  Latency       59.42ms    67.24ms   739.37ms
+  HTTP codes:
+    1xx - 0, 2xx - 10000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:     1.25MB/s
 
-Summary:
-  Total:	6.0751 secs
-  Slowest:	0.2403 secs
-  Fastest:	0.0020 secs
-  Average:	0.0292 secs
-  Requests/sec:	1646.0758
-
-Latency distribution:
-  95% in 0.0807 secs
-  99% in 0.1178 secs
-```
-
-```
-$ hey -n 10000 https://nginx.7f000001.nip.io:8889
-
-Summary:
-  Total:	2.4200 secs
-  Slowest:	0.1835 secs
-  Fastest:	0.0018 secs
-  Average:	0.0119 secs
-  Requests/sec:	4132.2788
-
-Latency distribution:
-  95% in 0.0247 secs
-  99% in 0.0578 secs
+$ bombardier -n 10000 https://nginx.7f000001.nip.io:8889 -k
+Statistics        Avg      Stdev        Max
+  Reqs/sec      3377.25    1823.16    8917.36
+  Latency       37.00ms    31.47ms   333.36ms
+  HTTP codes:
+    1xx - 0, 2xx - 10000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:     3.10MB/s
 ```

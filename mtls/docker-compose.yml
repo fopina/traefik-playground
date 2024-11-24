@@ -36,9 +36,12 @@ services:
       traefik.http.routers.whoamix.rule: Host(`whoami.7f000001.nip.io`)
       traefik.http.routers.whoamix.entrypoints: webtls
       traefik.http.routers.whoamix.tls: "true"
-      traefik.http.routers.whoamix.middlewares: pass-certificate-info
+      traefik.http.routers.whoamix2.rule: Host(`whoami-tls.7f000001.nip.io`)
+      traefik.http.routers.whoamix2.entrypoints: webtls
+      traefik.http.routers.whoamix2.tls: "true"
+      traefik.http.routers.whoamix2.middlewares: pass-certificate-info
       traefik.http.middlewares.pass-certificate-info.passTLSClientCert.info.subject.commonName: 'true'
-      traefik.http.routers.whoamix.tls.options: mtlsTest@file
+      traefik.http.routers.whoamix2.tls.options: mtlsTest@file
   
   nginx:
     image: nginx:1.19
