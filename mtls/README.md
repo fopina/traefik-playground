@@ -37,21 +37,59 @@ test_it.bats
 `whoami` used to validate headers, `nginx` to benchmark different mTLS approaches, as it replies 3x faster than whoami and easier to notice differences
 
 ```
-$ bombardier -n 10000 https://whoami.7f000001.nip.io:8889 -k   
+$ bombardier -n 10000 https://whoami.7f000001.nip.io:8889 -k -l
 Statistics        Avg      Stdev        Max
-  Reqs/sec      2094.29     721.82    3572.05
-  Latency       59.42ms    67.24ms   739.37ms
+  Reqs/sec      2104.09     586.39    3328.22
+  Latency       59.01ms    64.34ms   549.66ms
+  Latency Distribution
+     ...
+     99%   289.36ms
   HTTP codes:
     1xx - 0, 2xx - 10000, 3xx - 0, 4xx - 0, 5xx - 0
     others - 0
-  Throughput:     1.25MB/s
+  Throughput:     1.26MB/s
 
 $ bombardier -n 10000 https://nginx.7f000001.nip.io:8889 -k
 Statistics        Avg      Stdev        Max
-  Reqs/sec      3377.25    1823.16    8917.36
-  Latency       37.00ms    31.47ms   333.36ms
+  Reqs/sec      3714.36    1533.58    8782.58
+  Latency       33.85ms    24.08ms   355.87ms
+  Latency Distribution
+     ...
+     99%   128.62ms
   HTTP codes:
     1xx - 0, 2xx - 10000, 3xx - 0, 4xx - 0, 5xx - 0
     others - 0
-  Throughput:     3.10MB/s
+  Throughput:     3.39MB/s
+```
+
+Benchmark mTLS enabled (no CN validation)
+
+```
+$ bombardier -n 10000 https://nginx-mtls.7f000001.nip.io:8889 -k --cert good-client/cert.pem --key good-client/key.pem -l
+Statistics        Avg      Stdev        Max
+  Reqs/sec      4131.03    1781.56    8998.69
+  Latency       30.31ms    28.63ms   424.95ms
+  Latency Distribution
+     ...
+     99%   142.07ms
+  HTTP codes:
+    1xx - 0, 2xx - 10000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:     3.86MB/s
+```
+
+Benchmark mTLS enabled and CN validated via forward-auth
+
+```
+$ bombardier -n 10000 https://nginx-mtls-cn.7f000001.nip.io:8889 -k --cert good-client/cert.pem --key good-client/key.pem -l
+Statistics        Avg      Stdev        Max
+  Reqs/sec      1089.06     762.40    4946.31
+  Latency      114.34ms    71.01ms   716.47ms
+  Latency Distribution
+     ...
+     99%   371.55ms
+  HTTP codes:
+    1xx - 0, 2xx - 10000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:     1.02MB/s
 ```
