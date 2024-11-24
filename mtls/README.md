@@ -11,6 +11,8 @@ This benchmarks two approaches for CN filtering: `passTLSInfo + matchHeader` ver
 ```
 minica -ca-cert good-one.pem -ca-key good-one-key.pem -ca-cn "good-one" -domains '*.7f000001.nip.io'
 minica -ca-cert good-one.pem -ca-key good-one-key.pem -domains 'good-client'
+minica -ca-cert good-one.pem -ca-key good-one-key.pem -domains 'good-client-2'
+minica -ca-cert good-one.pem -ca-key good-one-key.pem -domains 'good-client-bad-cn'
 minica -ca-cert bad-one.pem -ca-key bad-one-key.pem -ca-cn "reject-me" -domains 'bad-client'
 ```
 
