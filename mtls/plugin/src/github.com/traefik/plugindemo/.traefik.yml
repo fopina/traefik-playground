@@ -9,3 +9,4 @@ summary: '[Demo] Add Request Header'
 testData:
   Headers:
     X-Demo: test
+    X-URL: '{{ . }}'

@@ -93,3 +93,19 @@ Statistics        Avg      Stdev        Max
     others - 0
   Throughput:     1.02MB/s
 ```
+
+Benchmark mTLS enabled and CN validated via custom plugin
+
+```
+$ bombardier -n 10000 https://nginx-mtls-cn-plugin.7f000001.nip.io:8889 -k --cert good-client/cert.pem --key good-client/key.pem -l
+Statistics        Avg      Stdev        Max
+  Reqs/sec      3259.70    1410.83    6955.92
+  Latency       38.20ms    37.13ms   588.97ms
+  Latency Distribution
+     ...
+     99%   227.25ms
+  HTTP codes:
+    1xx - 0, 2xx - 10000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:     3.09MB/s
+```

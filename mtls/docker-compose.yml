@@ -38,8 +38,6 @@ services:
       traefik.http.routers.whoamix.rule: Host(`whoami.7f000001.nip.io`)
       traefik.http.routers.whoamix.entrypoints: webtls
       traefik.http.routers.whoamix.tls: "true"
-      traefik.http.routers.whoamix.middlewares: my-plugin
-      traefik.http.middlewares.my-plugin.plugin.example.headers.Foo: Bar
       traefik.http.routers.whoamix2.rule: Host(`whoami-tls.7f000001.nip.io`)
       traefik.http.routers.whoamix2.entrypoints: webtls
       traefik.http.routers.whoamix2.tls: "true"
@@ -64,9 +62,14 @@ services:
       traefik.http.routers.nginx3.rule: Host(`nginx-mtls-cn.7f000001.nip.io`)
       traefik.http.routers.nginx3.entrypoints: webtls
       traefik.http.routers.nginx3.tls: "true"
-      traefik.http.middlewares.pass-certificate-info2.passTLSClientCert.info.subject.commonName: 'true'
       traefik.http.routers.nginx3.tls.options: mtlsTest@file
-      traefik.http.routers.nginx3.middlewares: pass-certificate-info2,validate-cn
+      traefik.http.routers.nginx3.middlewares: pass-certificate-info,validate-cn
+      traefik.http.routers.nginx4.rule: Host(`nginx-mtls-cn-plugin.7f000001.nip.io`)
+      traefik.http.routers.nginx4.entrypoints: webtls
+      traefik.http.routers.nginx4.tls: "true"
+      traefik.http.middlewares.my-plugin2.plugin.example.headers.X-Forwarded-Tls-Client-Cert-Info: Subject%3D%22CN%3Dgood-client%22
+      traefik.http.routers.nginx4.tls.options: mtlsTest@file
+      traefik.http.routers.nginx4.middlewares: pass-certificate-info,my-plugin2
 
   validate-cn:
     build: cn_validator
