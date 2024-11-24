@@ -94,6 +94,8 @@ Statistics        Avg      Stdev        Max
   Throughput:     1.02MB/s
 ```
 
+> Note: test with scale validate-cn=5 makes no difference, bottleneck is not the validator code but more likely the communication (HTTP stack)
+
 Benchmark mTLS enabled and CN validated via custom plugin
 
 ```
