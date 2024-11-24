@@ -1,4 +1,10 @@
-Test traefik mTLS setup
+### Test traefik mTLS with CN filtering
+
+Traefik supports mTLS but it does not allow filtering by CN. While we could setup different CAs per service and issue multiple certificates for users with access to more than 1 service, it is not very practical.
+
+This benchmarks two approaches for CN filtering: `passTLSInfo + matchHeader` versus `custom plugin`
+
+## Setup
 
 [minica](https://github.com/fopina/minica/releases/tag/v1.0.2-1) used to generate certs:
 
@@ -8,21 +14,20 @@ minica -ca-cert good-one.pem -ca-key good-one-key.pem -domains 'good-client'
 minica -ca-cert bad-one.pem -ca-key bad-one-key.pem -ca-cn "reject-me" -domains 'bad-client'
 ```
 
-`docker compose up -d` to bring it up
+`docker compose up -d` to bring this up. All host matching done with `7f000001.nip.io` so they resolve to `127.0.0.1`.
 
 ## Validate server cert is valid against good-one CA - and that client cert is "optional"
 
 ```
-$ curl --cacert good-one.pem \
-       https://traefik.7f000001.nip.io:8889/dashboard/ 
-<!DOCTYPE html><html><head><title>Traefik...
+$ ./test_it.bats
 
-$ curl --cacert good-one.pem \
-       https://whoami.7f000001.nip.io:8889/dashboard/ 
-Hostname: c7461a3368d9
-IP: 127.0.0.1
-IP: ::1
-...
+test_it.bats
+ ✓ test without mtls succeeds
+ ✓ test mtls without cert is rejected
+ ✓ test mtls with bad-client cert is rejected
+ ✓ test mtls with good-client cert succeeds
+
+4 tests, 0 failures
 ```
 
 nginx to benchmark different mTLS approaches, as it's lighter than whoami and easier to notice differences
