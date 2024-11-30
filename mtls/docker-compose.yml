@@ -10,6 +10,8 @@ services:
       - --entrypoints.webtls.address=:443
       - --entrypoints.webtls.http.tls.options=mtlsTest@file
       - --experimental.localplugins.example.modulename=github.com/traefik/plugindemo
+      - --experimental.plugins.cnvalidator.modulename=github.com/fopina/traefik-commonname-validator-plugin
+      - --experimental.plugins.cnvalidator.version=v0.0.1
     ports:
       - 127.0.0.1:8888:80
       - 127.0.0.1:8889:443
@@ -67,9 +69,30 @@ services:
       traefik.http.middlewares.my-plugin2.plugin.example.headers.X-Forwarded-Tls-Client-Cert-Info: Subject%3D%22CN%3Dgood-client%22
       traefik.http.routers.nginx4.tls.options: mtlsTest@file
       traefik.http.routers.nginx4.middlewares: pass-certificate-info,my-plugin2
+      # added after PoC, released version
+      traefik.http.routers.nginx5.rule: Host(`nginx-mtls-cn-final.7f000001.nip.io`)
+      traefik.http.routers.nginx5.entrypoints: webtls
+      traefik.http.routers.nginx5.tls: "true"
+      traefik.http.routers.nginx5.tls.options: mtlsTest@file
+      traefik.http.middlewares.allow-cns.headers.customrequestheaders.X-Allow-CN: good-client
+      traefik.http.routers.nginx5.middlewares: pass-certificate-info,allow-cns,validate-cn-final
+      # added after PoC, released version
+      traefik.http.routers.nginx6.rule: Host(`nginx-mtls-cn-plugin-final.7f000001.nip.io`)
+      traefik.http.routers.nginx6.entrypoints: webtls
+      traefik.http.routers.nginx6.tls: "true"
+      traefik.http.routers.nginx6.tls.options: mtlsTest@file
+      traefik.http.middlewares.allow-cn-plugin.plugin.cnvalidator.allowed[0]: good-client
+      traefik.http.routers.nginx6.middlewares: allow-cn-plugin
 
   validate-cn:
     build: cn_validator
     labels:
       traefik.http.services.validate-cn.loadbalancer.server.port: 8080
       traefik.http.middlewares.validate-cn.forwardauth.address: http://validate-cn:8080/validate
+
+  validate-cn-final:
+    # same as cn_validator but no longer the PoC
+    image: ghcr.io/fopina/traefik-cn-foward-auth:v0.0.2
+    labels:
+      traefik.http.services.validate-cn-final.loadbalancer.server.port: 8080
+      traefik.http.middlewares.validate-cn-final.forwardauth.address: http://validate-cn-final:8080/

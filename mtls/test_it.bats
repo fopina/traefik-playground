@@ -116,3 +116,43 @@ load '../test/test_helper/bats-assert/load'
   assert_failure 56
   assert_output --partial 'returned error: 403'
 }
+
+@test "test mtls-cn-final with good-client cert succeeds" {
+  run curl -f \
+           --cacert good-one.pem \
+           --cert good-client/cert.pem \
+           --key good-client/key.pem \
+           https://nginx-mtls-cn-final.7f000001.nip.io:8889/
+  assert_success
+  assert_output --partial 'Thank you for using nginx.'
+}
+
+@test "test mtls-cn-final with good-client-bad-cn cert is rejected" {
+  run curl -f \
+           --cacert good-one.pem \
+           --cert good-client-bad-cn/cert.pem \
+           --key good-client-bad-cn/key.pem \
+           https://nginx-mtls-cn-final.7f000001.nip.io:8889/
+  assert_failure 56
+  assert_output --partial 'returned error: 403'
+}
+
+@test "test mtls-cn-plugin-final with good-client cert succeeds" {
+  run curl -f \
+           --cacert good-one.pem \
+           --cert good-client/cert.pem \
+           --key good-client/key.pem \
+           https://nginx-mtls-cn-plugin-final.7f000001.nip.io:8889/
+  assert_success
+  assert_output --partial 'Thank you for using nginx.'
+}
+
+@test "test mtls-cn-plugin-final with good-client-bad-cn cert is rejected" {
+  run curl -f \
+           --cacert good-one.pem \
+           --cert good-client-bad-cn/cert.pem \
+           --key good-client-bad-cn/key.pem \
+           https://nginx-mtls-cn-plugin-final.7f000001.nip.io:8889/
+  assert_failure 56
+  assert_output --partial 'returned error: 403'
+}
